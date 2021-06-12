@@ -1,9 +1,13 @@
 module.exports = {
 	name: 'prune',
 	description: 'Prune up to 99 messages.',
+	permissions: 'KICK_MEMBERS',
+	cooldown: 5,
 	execute(message, args) {
-		// const amount = parseInt(args[0]) + 1;
-		const amount = parseInt(args[0]);
+		// if (message.author.id !== '853400516537483315') {
+		// 	message.reply("You don't have permission to do that");
+		// }
+		const amount = parseInt(args[0]) + 1;
 
 		if (isNaN(amount)) {
 			return message.reply("that doesn't seem to be a valid number.");
