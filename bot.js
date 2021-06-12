@@ -10,18 +10,18 @@ const BAD_WORDS = ["gay"];
 
 filter.addWords(...BAD_WORDS);
 
-// const filterBadWords = (msg, words) => {};
-
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on("message", (msg) => {
-	// const badWord = filterBadWords(msg.content, BAD_WORDS);
 	if (filter.isProfane(msg.content)) {
-		msg.channel.send("Don't be like that!");
+		msg.channel.send("Don't be like that!", { reply: msg });
 		msg.delete({ reason: "don't be like that!" });
-		// msg.send("Pong!");
+		cleanedMessage = filter.clean(msg.content);
+		msg.channel.send(
+			`${msg.author.username}'s filtered message: ${cleanedMessage}`
+		);
 	}
 });
 
