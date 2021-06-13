@@ -4,15 +4,10 @@ module.exports = {
 	description: 'Might tell jokes one day',
 	execute(message) {
 		message.reply("Nah bruv, I don't joke around");
-		const replyMessage = async () => {
-			const url = 'https://api.chucknorris.io/jokes/random';
-			const res = await fetch(url);
-			const joke = await res.json();
-			return `Just kidding, here you go\n${joke.value}`;
-		};
-		setTimeout(() => {
-			const replyText = replyMessage();
-			message.reply(replyText);
-		}, 1000);
+		const url = 'https://api.chucknorris.io/jokes/random';
+		fetch(url)
+			.then((res) => res.json())
+			.then((json) => message.reply(json.value))
+			.catch((err) => console.log(err));
 	},
 };

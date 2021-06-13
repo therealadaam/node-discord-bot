@@ -126,4 +126,8 @@ client.on('message', (msg) => {
 	// msg.channel.bulkDelete(1);
 });
 
+process.on('unhandledRejection', (error) => {
+	console.error('Unhandled promise rejection:', error);
+});
+
 client.login(BOT_TOKEN);
