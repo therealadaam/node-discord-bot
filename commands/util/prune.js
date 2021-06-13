@@ -1,6 +1,7 @@
 module.exports = {
 	name: 'prune',
-	description: 'Prune up to 99 messages.',
+	description: 'Prune (delete) up to 99 messages.',
+	usage: '[numberOfMessagesToRemove]',
 	permissions: 'KICK_MEMBERS',
 	cooldown: 5,
 	execute(message, args) {
