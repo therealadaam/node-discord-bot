@@ -5,9 +5,9 @@ CREATE DATABASE IF NOT EXISTS bot_database;
 -- \c into bot_database
 CREATE TABLE IF NOT EXISTS game(
 	user_id BIGINT PRIMARY KEY,
-	lost_count SERIAL,
+	loss_count INT,
 	last_loss TIMESTAMP NOT NULL,
 	first_loss TIMESTAMP NOT NULL
 );
 
-INSERT INTO game(user_id,lost_count,last_loss,first_loss) VALUES(123890641468158306,1,NOW(),NOW());
+INSERT INTO game(user_id,loss_count,last_loss,first_loss) VALUES(123890641468158306,1,NOW(),NOW());
