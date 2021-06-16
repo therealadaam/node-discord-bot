@@ -3,6 +3,8 @@ const Pool = require('pg').Pool;
 const local = process.env.DATABASE_URL.includes('localhost');
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
+	// basically this means don't use SSL if it's local. There are better ways
+	// but this does the job for now
 	ssl: local
 		? false
 		: {
