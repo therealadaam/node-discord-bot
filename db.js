@@ -1,10 +1,13 @@
 const Pool = require('pg').Pool;
 
+const local = process.env.DATABASE_URL.includes('localhost');
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
-	ssl: {
-		rejectUnauthorized: false,
-	},
+	ssl: local
+		? false
+		: {
+				rejectUnauthorized: false,
+		  },
 });
 
 // do some date/time translations and magic
@@ -14,12 +17,24 @@ const pool = new Pool({
 
 const getUser = async (bigID, db) => {
 	try {
-		const query = {
-			text: 'select * from $2 where user_id = $1;',
-			values: [bigID, db],
-		};
-		const res = await pool.query(query);
-		return res;
+		switch (db) {
+			case 'game': {
+				const query = {
+					text: 'select * from game where user_id = $1;',
+					values: [bigID],
+				};
+				const res = await pool.query(query);
+				return res;
+			}
+			case 'fish_count': {
+				const query = {
+					text: 'select * from fish_count where user_id = $1;',
+					values: [bigID],
+				};
+				const res = await pool.query(query);
+				return res;
+			}
+		}
 	} catch (error) {
 		console.error(error.stack);
 	}
@@ -36,9 +51,9 @@ const addUser = async (bigID, db) => {
 				const res = await pool.query(query);
 				return res;
 			}
-			case 'fish': {
+			case 'fish_count': {
 				const query = {
-					text: 'INSERT INTO fish(user_id,slap_count,last_slap,first_slap) VALUES($1,$2,NOW(),NOW())',
+					text: 'INSERT INTO fish_count(user_id,slap_count,last_slap,first_slap) VALUES($1,$2,NOW(),NOW())',
 					values: [bigID, 1],
 				};
 				const res = await pool.query(query);
@@ -52,12 +67,24 @@ const addUser = async (bigID, db) => {
 
 const checkUserExists = async (bigID, db) => {
 	try {
-		const query = {
-			text: 'select user_id from $2 where user_id = $1;',
-			values: [bigID, db],
-		};
-		const res = await pool.query(query);
-		return res;
+		switch (db) {
+			case 'game': {
+				const query = {
+					text: 'select user_id from game where user_id = $1;',
+					values: [bigID],
+				};
+				const res = await pool.query(query);
+				return res;
+			}
+			case 'fish_count': {
+				const query = {
+					text: 'select user_id from fish_count where user_id = $1;',
+					values: [bigID],
+				};
+				const res = await pool.query(query);
+				return res;
+			}
+		}
 	} catch (error) {
 		console.error(error.stack);
 	}
@@ -74,9 +101,9 @@ const updateUser = async (bigID, db) => {
 				const res = await pool.query(query);
 				return res;
 			}
-			case 'fish': {
+			case 'fish_count': {
 				const query = {
-					text: 'update fish set slap_count = slap_count + 1, last_slap = NOW() where user_id = $1;',
+					text: 'update fish_count set slap_count = slap_count + 1, last_slap = NOW() where user_id = $1;',
 					values: [bigID],
 				};
 				const res = await pool.query(query);
