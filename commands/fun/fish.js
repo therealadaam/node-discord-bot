@@ -10,7 +10,10 @@ module.exports = {
 	guildOnly: true,
 	execute(message, args) {
 		// refactor this if to get the count they've been slapped instead of this message
-		if (!args.length) message.reply('You must @ mention someone to slap!');
+		if (!args.length) {
+			message.reply('You must @ mention someone to slap!');
+			return;
+		}
 		const data = [];
 		const tableName = 'fish_count';
 		// console.dir(message.mentions.members);
@@ -28,25 +31,45 @@ module.exports = {
 			// slapped. not that they've been slapped X times
 			// !fish count user should do that,
 			const dbResults = db.checkUserExists(userId, tableName);
-			dbResults.then((res) => {
-				if (res.rowCount) {
-					const dbUserDetails = db.getUser(userId, tableName);
-					dbUserDetails.then((results) => {
-						results.rows.forEach((el) => {
-							const slapCount = parseInt(el.slap_count) + 1;
-							console.dir(slapCount);
-							data.push(
-								`@${member.user.username} has been slapped ${slapCount} times`
-							);
+			dbResults
+				.then((res) => {
+					// console.log(res);
+					if (res.rowCount) {
+						// const dbUserDetails = db.getUser(userId, tableName);
+						// dbUserDetails.then((results) => {
+						// 	results.rows.forEach((el) => {
+						// 		// const slapCount = parseInt(el.slap_count) + 1;
+						// 		console.dir(slapCount);
+						// 		data.push(
+						// 			`@${member.user.username} has been slapped by a fish!`
+						// 		);
+						// 	});
+						// });
+						db.updateUser(userId, tableName).catch((err) => {
+							console.error(err.message);
+							message.reply('something went wrong :-(');
+							return;
 						});
-					});
-				} else {
-					db.addUser(userId, tableName);
-				}
-			});
+					} else {
+						db.addUser(userId, tableName).catch((err) => {
+							console.error(err.message);
+							message.reply('something went wrong :-(');
+							return;
+						});
+					}
+				})
+				.catch((err) => {
+					console.error(err.message);
+					message.reply('something went wrong :-(');
+					return;
+				});
 			// console.dir(res);
 			// const hasBeenSlapped
+			data.push(`${member.user} has been slapped by a fish!`);
 		});
 		// message.reply("Nah bruv, I don't joke around");
+		// console.dir(data);
+		data.push('https://tenor.com/view/slap-fish-funny-gif-9229400');
+		message.channel.send(data);
 	},
 };

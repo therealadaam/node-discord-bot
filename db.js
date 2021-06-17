@@ -17,9 +17,9 @@ const pool = new Pool({
 // lastX = new Date(serverReturn.last_loss)
 // prettyDate = lastX.toLocaleDateString()
 
-const getUser = async (bigID, db) => {
+const getUser = async (bigID, table) => {
 	try {
-		switch (db) {
+		switch (table) {
 			case 'game': {
 				const query = {
 					text: 'select * from game where user_id = $1;',
@@ -42,9 +42,9 @@ const getUser = async (bigID, db) => {
 	}
 };
 
-const addUser = async (bigID, db) => {
+const addUser = async (bigID, table) => {
 	try {
-		switch (db) {
+		switch (table) {
 			case 'game': {
 				const query = {
 					text: 'INSERT INTO game(user_id,loss_count,last_loss,first_loss) VALUES($1,$2,NOW(),NOW())',
@@ -67,9 +67,9 @@ const addUser = async (bigID, db) => {
 	}
 };
 
-const checkUserExists = async (bigID, db) => {
+const checkUserExists = async (bigID, table) => {
 	try {
-		switch (db) {
+		switch (table) {
 			case 'game': {
 				const query = {
 					text: 'select user_id from game where user_id = $1;',
@@ -92,9 +92,9 @@ const checkUserExists = async (bigID, db) => {
 	}
 };
 
-const updateUser = async (bigID, db) => {
+const updateUser = async (bigID, table) => {
 	try {
-		switch (db) {
+		switch (table) {
 			case 'game': {
 				const query = {
 					text: 'update game set loss_count = loss_count + 1, last_loss = NOW() where user_id = $1;',

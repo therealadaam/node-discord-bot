@@ -1,8 +1,16 @@
 const db = require('../../db');
+
+const converToPst = (zTime) => {
+	const time = new Date(zTime);
+	const PST = Intl.DateTimeFormat('en-US', {
+		timezone: 'America/Los_Angeles',
+	}).format(time);
+	return PST;
+};
 module.exports = {
 	name: 'game',
-	description:
-		'Counts how many times you have lost the game and lets you know a few details.',
+	description: `Counts how many times you have lost the game and lets you know a few details. 
+Unfortunately all times are in PST due to the lack of Locale info that Discord API provides`,
 	cooldown: 5,
 	guildOnly: true,
 	execute(message) {
@@ -19,14 +27,14 @@ module.exports = {
 					const messageToSend = [];
 					result.rows.forEach((element) => {
 						const loss_count = parseInt(element.loss_count) + 1;
-						const last_loss = element.last_loss.toLocalDateString();
-						const first_loss = element.first_loss.toLocalDateString();
-						console.dir(last_loss);
+						// console.dir(element.last_loss);
+						// console.log(typeof element.last_loss);
+						const last_loss = converToPst(element.last_loss);
+						const first_loss = converToPst(element.first_loss);
 						messageToSend.push(`You've lost the game ${loss_count} times`);
 						messageToSend.push(`Your last loss was on ${last_loss}`);
 						messageToSend.push(`Your first loss was on ${first_loss}`);
 					});
-					console.dir(messageToSend);
 
 					db.updateUser(userId, tableName);
 					message.channel.send(messageToSend);
