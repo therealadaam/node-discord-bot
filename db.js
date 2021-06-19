@@ -86,6 +86,8 @@ const checkUserExists = async (bigID, table) => {
 				const res = await pool.query(query);
 				return res;
 			}
+			default:
+				return 'No table with that name!';
 		}
 	} catch (error) {
 		console.error(error.stack);
