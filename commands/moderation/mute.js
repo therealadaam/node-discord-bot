@@ -9,7 +9,7 @@ module.exports = {
 		if (!message.mentions.users.size) {
 			return message.reply('you need to tag a user in order to mute them!');
 		}
-		console.log(`${args.length}`);
+		// console.log(`${args.length}`);
 		if (args.length < 2) {
 			return message.reply('you need to specify how long to mute them!');
 		}

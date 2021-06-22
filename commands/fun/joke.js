@@ -8,6 +8,6 @@ module.exports = {
 		fetch(url)
 			.then((res) => res.json())
 			.then((json) => message.reply(`Just kidding, here ya go\n${json.value}`))
-			.catch((err) => console.log(err));
+			.catch((err) => console.error(err));
 	},
 };
