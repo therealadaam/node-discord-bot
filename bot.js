@@ -127,6 +127,35 @@ client.on('message', (msg) => {
 	// msg.channel.bulkDelete(1);
 });
 
+// Create an event listener for new guild members
+client.on('guildMemberAdd', (member) => {
+	// Send the message to a designated channel on a server:
+	const channel = member.guild.channels.cache.find(
+		(ch) => ch.name === 'welcome'
+	);
+	const basicRole = member.guild.roles.cache.find((br) => br.name === 'newbie');
+	// Do nothing if the channel wasn't found on this server
+	if (!channel) return;
+	const newUser = member.user.id;
+	// Send the message, mentioning the member
+	const message = channel.send(
+		`Welcome to the server, ${member}. React to this with 👌 within 15 seconds to gain access`
+	);
+	// Create a reaction collector
+	const filter = (reaction, user) =>
+		reaction.emoji.name === '👌' && user.id === newUser;
+
+	message
+		.awaitReactions(filter, { time: 15000 })
+		// .then((collected) => console.log(`Collected ${collected.size} reactions`))
+		.then((res) => {
+			if (!res.size) return;
+			console.log(`Collected ${collected.size} reactions`);
+			member.roles.add([basicRole]);
+		})
+		.catch(console.error);
+});
+
 process.on('unhandledRejection', (error) => {
 	console.error('Unhandled promise rejection:', error);
 });
