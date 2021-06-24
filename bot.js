@@ -4,7 +4,15 @@ const fs = require('fs');
 const config = require('./config.json');
 require('dotenv').config();
 
-const client = new Discord.Client();
+const intents = new Discord.Intents();
+intents.add(
+	'GUILDS',
+	'GUILD_MEMBERS',
+	'GUILD_MESSAGES',
+	'GUILD_MESSAGE_REACTIONS',
+	'DIRECT_MESSAGES'
+);
+const client = new Discord.Client({ ws: { intents: intents } });
 // const filter = new Filter({ emptyList: true });
 const likedFilter = new Filter({ emptyList: true });
 
@@ -128,19 +136,20 @@ client.on('message', (msg) => {
 });
 
 // Create an event listener for new guild members
-client.on('guildMemberAdd', (member) => {
-	// Send the message to a designated channel on a server:
+client.on('guildMemberAdd', async (member) => {
 	const channel = member.guild.channels.cache.find(
 		(ch) => ch.name === 'welcome'
 	);
+
 	const basicRole = member.guild.roles.cache.find((br) => br.name === 'newbie');
 	// Do nothing if the channel wasn't found on this server
 	if (!channel) return;
 	const newUser = member.user.id;
 	// Send the message, mentioning the member
-	const message = channel.send(
+	const message = await channel.send(
 		`Welcome to the server, ${member}. React to this with 👌 within 15 seconds to gain access`
 	);
+	await message.react('👌');
 	// Create a reaction collector
 	const filter = (reaction, user) =>
 		reaction.emoji.name === '👌' && user.id === newUser;
@@ -150,7 +159,7 @@ client.on('guildMemberAdd', (member) => {
 		// .then((collected) => console.log(`Collected ${collected.size} reactions`))
 		.then((res) => {
 			if (!res.size) return;
-			console.log(`Collected ${collected.size} reactions`);
+			console.log(`Collected ${res.size} reactions`);
 			member.roles.add([basicRole]);
 		})
 		.catch(console.error);
