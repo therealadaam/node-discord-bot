@@ -1,10 +1,18 @@
 const Discord = require('discord.js');
+const { GatewayIntentBits, ChannelType } = require('discord.js');
 const Filter = require('./filter');
 const fs = require('fs');
 const config = require('./config.json');
 require('dotenv').config();
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMembers,
+	],
+});
 // const filter = new Filter({ emptyList: true });
 const likedFilter = new Filter({ emptyList: true });
 
@@ -60,7 +68,7 @@ const acceptCommands = (msg, prefix) => {
 
 	if (!command) return;
 
-	if (command.guildOnly && msg.channel.type === 'dm') {
+	if (command.guildOnly && msg.channel.type === ChannelType.DM) {
 		return msg.reply("I can't execute that command inside DMs!");
 	}
 
@@ -120,7 +128,7 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on('message', (msg) => {
+client.on('messageCreate', (msg) => {
 	// filterWords(msg, filter);
 	reactToWords(msg, likedFilter);
 	acceptCommands(msg, config.CMD_PREFIX);
